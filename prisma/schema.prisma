@@ -9,7 +9,44 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  bookings Booking[]
+}
+
+model Room {
+  id            Int       @id @default(autoincrement())
+  number        Int       @unique
+  type          String
+  pricePerNight Float
+  bookings      Booking[]
+}
+
+model Booking {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  startDate DateTime
+  endDate   DateTime
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rooms     Room[]
+
+  @@unique([userId, startDate, endDate])
+}
+
+model BookingToRoom {
+  A Int
+  B Int
+
+  @@id([A, B], map: "_BookingToRoom_AB_pkey")
+  @@index([B], map: "_BookingToRoom_B_index")
+  @@map("_BookingToRoom")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
 }
