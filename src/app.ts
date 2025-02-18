@@ -35,7 +35,10 @@ app.get("/dashboard", (req, res) => {
     `);
 });
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 
 app.listen(3000, () => console.log('🚀 Server running on http://localhost:3000'));
 
