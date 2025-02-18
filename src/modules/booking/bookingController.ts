@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { BookingService } from "./bookingService";
 import { CreateBookingDto } from "./bookingDto";
 import { UpdateBookingStatusDto } from "./bookingDto";
@@ -51,5 +51,33 @@ bookingRouter.delete("/booking/:id", async (req, res) => {
     await bookingService.deleteBooking(Number(req.params.id));
     res.json({ message: "Booking deleted" });
 });
+
+bookingRouter.get(
+    "/room/:roomId/availability",
+    async (
+        req: any,
+        res: any
+    ) => {
+        try {
+            const { roomId } = req.params;
+            const { startDate, endDate } = req.query;
+
+            if (!startDate || !endDate) {
+                return res.status(400).json({ error: "Missing startDate or endDate" });
+            }
+
+            const available = await bookingService.isRoomAvailable(
+                Number(roomId),
+                new Date(startDate),
+                new Date(endDate)
+            );
+
+            return res.json({ available });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    }
+);
 
 export default bookingRouter;

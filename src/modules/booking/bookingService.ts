@@ -39,4 +39,20 @@ export class BookingService {
             where: { id },
         });
     }
+
+    async isRoomAvailable(roomId: number, startDate: Date, endDate: Date): Promise<boolean> {
+        const existingBooking = await prisma.booking.findFirst({
+            where: {
+                rooms: {
+                    some: {
+                        id: roomId
+                    }
+                },
+                OR: [
+                    { startDate: { lte: endDate }, endDate: { gte: startDate } }
+                ]
+            }
+        });
+        return !existingBooking;
+    }
 }
