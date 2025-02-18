@@ -52,7 +52,7 @@ export class AuthService {
             throw new Error("Invalid password");
         }
         
-        const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
         return { token, user };
     }
 }

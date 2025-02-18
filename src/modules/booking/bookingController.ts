@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { BookingService } from "./bookingService";
 import { CreateBookingDto } from "./bookingDto";
 import { UpdateBookingStatusDto } from "./bookingDto";
+import { authenticateJWT, authorizeRole } from "../../middlewares/authMiddleware";
 
 const bookingService = new BookingService();
 const bookingRouter = Router();
@@ -47,7 +48,7 @@ bookingRouter.patch("/booking/:id/status", async (req, res) => {
     }
 });
 
-bookingRouter.delete("/booking/:id", async (req, res) => {
+bookingRouter.delete("/booking/:id", authenticateJWT, authorizeRole("USER"), async (req, res) => {
     await bookingService.deleteBooking(Number(req.params.id));
     res.json({ message: "Booking deleted" });
 });

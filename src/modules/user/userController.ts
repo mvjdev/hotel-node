@@ -3,6 +3,7 @@ import { UserService } from "./userService";
 import { AuthService } from "../auth/authService";
 import jwt from "jsonwebtoken";
 import { Env } from "../../config/env";
+import { authenticateJWT, authorizeRole } from "../../middlewares/authMiddleware";
 
 const userService = new UserService();
 const authService = new AuthService();
@@ -45,27 +46,27 @@ userRouter.post("/login", async (req, res) => {
     }
 });
 
-userRouter.get("/user/:id", async (req, res) => {
+userRouter.get("/user/:id", authenticateJWT, authorizeRole("USER"), async (req, res) => {
     const user = await userService.getUserById(Number(req.params.id));
     res.json(user);
 });
 
-userRouter.get("/users", async (req, res) => {
+userRouter.get("/users", authenticateJWT, authorizeRole("ADMIN"), async (req, res) => {
     const users = await userService.getAllUsers();
     res.json(users);
 });
 
-userRouter.get("/user/email/:email", async (req, res) => {
+userRouter.get("/user/email/:email", authenticateJWT, authorizeRole("ADMIN"), async (req, res) => {
     const user = await userService.getUserByEmail(req.params.email);
     res.json(user);
 });
 
-userRouter.get("/user/name/:name", async (req, res) => {
+userRouter.get("/user/name/:name", authenticateJWT, authorizeRole("ADMIN"), async (req, res) => {
     const user = await userService.getUserByName(req.params.name);
     res.json(user);
 });
 
-userRouter.delete("/user/:id", async (req, res) => {
+userRouter.delete("/user/:id", authenticateJWT, authorizeRole("ADMIN"), async (req, res) => {
     await userService.deleteUser(Number(req.params.id));
     res.json({ message: "User deleted" });
 });
