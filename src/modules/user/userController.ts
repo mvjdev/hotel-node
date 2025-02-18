@@ -2,10 +2,10 @@ import { Router } from "express";
 import { UserService } from "./userService";
 import { CreateUserDto } from './userDto';
 import jwt from "jsonwebtoken";
-
 const JWT_SECRET = "your_secret_key";
 
 const userService = new UserService();
+
 const userRouter = Router();
 
 userRouter.put("/user", async (req, res) => {
@@ -14,16 +14,13 @@ userRouter.put("/user", async (req, res) => {
     res.json({ message: "User created/updated" });
 });
 
-userRouter.get("/user/:id", async (req, res) => {
 
 router.post("/register", async (req, res) => {
     try {
         // Création ou mise à jour de l'utilisateur
         const user = await userService.crupdateUser(req.body);
-
         // Génération du token
         const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
-
         // Retourner les données avec le token
         res.status(201).json({
             token,
@@ -41,8 +38,6 @@ router.post("/register", async (req, res) => {
         }
     }
 });
-
-
 // ✅ Route de connexion
 router.post("/login", async (req, res) => {
     try {
