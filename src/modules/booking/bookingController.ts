@@ -80,4 +80,14 @@ bookingRouter.get(
     }
 );
 
+bookingRouter.get("/user/:userId/bookings", async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const bookings = await bookingService.getBookingsByUser(Number(userId));
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 export default bookingRouter;

@@ -55,4 +55,11 @@ export class BookingService {
         });
         return !existingBooking;
     }
+
+    async getBookingsByUser(userId: number) {
+        return prisma.booking.findMany({
+            where: { userId },
+            include: { rooms: true }
+        });
+    }
 }
