@@ -1,14 +1,48 @@
 import { Router } from "express";
 import { UserService } from "./userService";
-import { CreateUserDto } from './userDto';
+import { AuthService } from "../auth/authService";
+import jwt from "jsonwebtoken";
+import { Env } from "../../config/env";
 
 const userService = new UserService();
+const authService = new AuthService();
 const userRouter = Router();
 
-userRouter.put("/user", async (req, res) => {
-    const parsedData = CreateUserDto.parse(req.body);
-    await userService.crupdateUser(parsedData);
-    res.json({ message: "User created/updated" });
+userRouter.post("/register", async (req, res) => {
+    try {
+        const user = await authService.registerUser(req.body);
+        
+        const token = jwt.sign({ userId: user.id, email: user.email }, Env.JWT_SECRET, { expiresIn: "1h" });
+        
+        res.status(201).json({
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            }
+        });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({ message: error.message });
+        } else {
+            res.status(400).json({ message: "An unknown error occurred" });
+        }
+    }
+});
+
+userRouter.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const { token, user } = await authService.loginUser(email, password);
+        res.json({ token, user });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(401).json({ message: error.message });
+        } else {
+            res.status(401).json({ message: "An unknown error occurred" });
+        }
+    }
 });
 
 userRouter.get("/user/:id", async (req, res) => {
