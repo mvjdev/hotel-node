@@ -90,4 +90,28 @@ bookingRouter.get("/user/:userId/bookings", async (req, res) => {
     }
 });
 
+bookingRouter.put(
+    "/booking/:bookingId/cancel",
+    async (req: any, res: any) => {
+        try {
+            const { bookingId } = req.params;
+
+            const booking = await bookingService.getBookingById(Number(bookingId));
+            if (!booking) {
+                return res.status(404).json({ error: "Booking not found" });
+            }
+
+            const cancelled = await bookingService.cancelBooking(Number(bookingId), false);
+
+            if (!cancelled) {
+                return res.status(400).json({ error: "Could not cancel the booking" });
+            }
+
+            return res.json({ message: "Booking canceled successfully", refunded: false });
+        } catch (error) {
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    }
+);
+
 export default bookingRouter;

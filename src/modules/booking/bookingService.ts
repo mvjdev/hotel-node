@@ -62,4 +62,16 @@ export class BookingService {
             include: { rooms: true }
         });
     }
+
+    async cancelBooking(bookingId: number, refund: boolean): Promise<boolean> {
+        const booking = await this.getBookingById(bookingId);
+        if (!booking) return false;
+    
+        await prisma.booking.update({
+            where: { id: bookingId },
+            data: { status: "CANCELLED" }
+        });
+        
+        return true;
+    }
 }
