@@ -35,10 +35,13 @@ app.get("/dashboard", (req, res) => {
     `);
 });
 
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}));
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins
+};
+
+app.use(cors(options));
 
 app.listen(3000, () => console.log('🚀 Server running on http://localhost:3000'));
 
