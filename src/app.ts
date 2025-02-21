@@ -6,6 +6,7 @@ import passport from "passport";
 import session from "express-session";
 import cors from 'cors';
 import authRouter from './modules/auth/authController';
+import cookieParser from 'cookie-parser';
 import "./config/passport";
 
 const app = express();
@@ -28,20 +29,16 @@ app.use(passport.session());
 
 app.use("/auth", authRouter);
 
-app.get("/dashboard", (req, res) => {
-    res.send(`
-        <h1>Connexion réussie !</h1>
-        <p>Token : ${req.query.token}</p>
-    `);
-});
-
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173'];
 
 const options: cors.CorsOptions = {
-    origin: allowedOrigins
+    origin: allowedOrigins,
+    credentials: true,
 };
 
 app.use(cors(options));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 app.listen(3000, () => console.log('🚀 Server running on http://localhost:3000'));
 
