@@ -11,7 +11,7 @@ import "./config/passport";
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 app.use('/', userRouter);
 app.use('/', roomRouter);
 app.use('/', bookingRouter);
@@ -36,7 +36,7 @@ const options: cors.CorsOptions = {
     credentials: true,
 };
 
-app.use(cors(options));
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
