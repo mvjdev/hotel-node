@@ -35,18 +35,21 @@ authRouter.get(
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
             maxAge: 3600000,
         });
 
+        console.log("Cookies" , req.cookies.token);
+        
+
         console.log("DEBUG 1");
-console.log({
-    httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
-            maxAge: 3600000
-});
-console.log("DEBUG 2");
+        console.log({
+            httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "none",
+                    maxAge: 3600000
+        });
+        console.log("DEBUG 2");
         res.redirect(`${Env.FRONTEND_URL}/profil`);
 
     }
