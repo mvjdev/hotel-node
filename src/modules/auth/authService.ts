@@ -7,33 +7,43 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export class AuthService {
     async registerUser(data: CreateUserDtoType) {
-            const existingUser = await prisma.user.findUnique({
-                where: {
-                    email: data.email,
-                },
-            });
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                email: data.email,
+            },
+        });
 
-            const hashedPassword = await bcrypt.hash(data.password, 10);
+        const hashedPassword = await bcrypt.hash(data.password, 10);
     
-            if (existingUser) {
-                return prisma.user.update({
-                    where: {
-                        id: existingUser.id,
-                    },
-                    data: {
-                        name: data.name,
-                        email: data.email,
-                        password: hashedPassword,
-                    },
-                });
-            }
-    
-            return prisma.user.create({
+        if (existingUser) {
+            const updatedUser = await prisma.user.update({
+                where: { id: existingUser.id },
                 data: {
-                    ...data,
+                    name: data.name,
+                    email: data.email,
                     password: hashedPassword,
                 },
             });
+        
+            const token = jwt.sign(
+                { userId: updatedUser.id, email: updatedUser.email, role: updatedUser.role },
+                JWT_SECRET,
+                { expiresIn: "1h" }
+            );
+        
+            return { token, user: updatedUser };
+        }
+    
+        const user = await prisma.user.create({
+            data: {
+                ...data,
+                password: hashedPassword,
+            },
+        });
+
+        const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
+            
+        return { token, user };
     }
 
     async loginUser(email: string, password: string) {

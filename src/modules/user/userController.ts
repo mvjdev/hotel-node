@@ -11,10 +11,8 @@ const userRouter = Router();
 
 userRouter.post("/register", async (req, res) => {
     try {
-        const user = await authService.registerUser(req.body);
-        
-        const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, Env.JWT_SECRET, { expiresIn: "1h" });
-        
+        const { token, user } = await authService.registerUser(req.body);
+
         res.status(201).json({
             token,
             user: {
