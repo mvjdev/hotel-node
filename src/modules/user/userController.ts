@@ -13,7 +13,7 @@ userRouter.post("/register", async (req, res) => {
     try {
         const user = await authService.registerUser(req.body);
         
-        const token = jwt.sign({ userId: user.id, email: user.email }, Env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, Env.JWT_SECRET, { expiresIn: "1h" });
         
         res.status(201).json({
             token,
@@ -47,6 +47,8 @@ userRouter.post("/login", async (req, res) => {
 });
 
 userRouter.get("/user/:id", authenticateJWT, authorizeRole("USER"), async (req, res) => {
+    console.log(req.user);
+    
     const user = await userService.getUserById(Number(req.params.id));
     res.json(user);
 });
