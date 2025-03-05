@@ -115,4 +115,21 @@ bookingRouter.put(
     }
 );
 
+bookingRouter.get("/booking/:id/total-cost", async (req: any, res: any) => {
+    try {
+        const bookingId = Number(req.params.id);
+
+        if (isNaN(bookingId)) {
+            return res.status(400).json({ error: "Invalid booking ID" });
+        }
+
+        const totalPrice = await bookingService.getTotalPrice(bookingId);
+
+        res.json({ totalCost: totalPrice });
+    } catch (error) {
+        console.error("Error getting total price:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 export default bookingRouter;

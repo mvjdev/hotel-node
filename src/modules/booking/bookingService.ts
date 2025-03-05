@@ -74,4 +74,19 @@ export class BookingService {
         
         return true;
     }
+
+    async getTotalPrice(bookingId: number) {
+        const booking = await this.getBookingById(bookingId);
+        if (!booking) return 0;
+
+        const startDate = new Date(booking.startDate);
+        const endDate = new Date(booking.endDate);
+        const nights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        const totalPrice = booking.rooms.reduce((total, room) => {
+            return total + room.pricePerNight * nights;
+        }, 0);
+
+        return totalPrice;
+    }
 }
