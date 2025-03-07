@@ -124,7 +124,7 @@ bookingRouter.get("/booking/:id/total-cost", async (req: any, res: any) => {
         }
 
         const totalPrice = await bookingService.getTotalPrice(bookingId);
-            console.log("Total Price:", totalPrice);  // Logue le total price ici
+            console.log("Total Price:", totalPrice);  
 
         res.json({ totalCost: totalPrice });
     } catch (error) {
