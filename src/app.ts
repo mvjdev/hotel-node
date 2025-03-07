@@ -8,6 +8,7 @@ import cors from 'cors';
 import authRouter from './modules/auth/authController';
 import cookieParser from 'cookie-parser';
 import "./config/passport";
+import emailRouter from './modules/email/emailController';
 
 const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173'];
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use('/', userRouter);
 app.use('/', roomRouter);
 app.use('/', bookingRouter);
+app.use('/', emailRouter);
 
 app.use(
     session({

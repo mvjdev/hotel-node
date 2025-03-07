@@ -25,7 +25,9 @@ export class RoomService {
     }
 
     async getRoomById(id: number) {
+        console.log(`Searching room with ID: ${id}`); 
         return prisma.room.findUnique({
+            
             where: {
                 id,
             },
