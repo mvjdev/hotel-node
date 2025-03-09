@@ -36,7 +36,8 @@ authRouter.get(
             maxAge: 3600000,
         });
 
-        res.redirect(`${Env.FRONTEND_URL}/profil`);
+        res.redirect(user.role === "ADMIN" ? `${Env.FRONTEND_URL}/admin` : `${Env.FRONTEND_URL}/profil`);
+
 
     }
 );
